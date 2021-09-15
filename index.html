@@ -71,7 +71,44 @@
         <td>$2.77</td>
     </tr>
 </table>
+<hr>
+<blockquote site="https://cp-algorithms.com/linear_algebra/rank-matrix.html"></blockquote>
+You can search for the rank using Gaussian elimination. We will perform the same operations as when solving the system or finding its determinant. 
+But if at any step in the i-th column there are no rows with an non-empty entry among those that we didn't selected already, then we skip this step. 
+Otherwise, if we have found a row with a non-zero element in the i-th column during the i-th step, then we mark this row as a selected one, increase 
+the rank by one (initially the rank is set equal to 0), and perform the usual operations of taking this row away from the rest.
+the algorithm runs in O(n3).For more info<a href="https://www.geeksforgeeks.org/program-for-rank-of-matrix/"> Click Here</a></blockquote>
+<pre>
+    const double EPS = 1E-9;
 
-</ol>
+int compute_rank(vector<vector<double>> A) {
+    int n = A.size();
+    int m = A[0].size();
+
+    int rank = 0;
+    vector<bool> row_selected(n, false);
+    for (int i = 0; i < m; ++i) {
+        int j;
+        for (j = 0; j < n; ++j) {
+            if (!row_selected[j] && abs(A[j][i]) > EPS)
+                break;
+        }
+
+        if (j != n) {
+            ++rank;
+            row_selected[j] = true;
+            for (int p = i + 1; p < m; ++p)
+                A[j][p] /= A[j][i];
+            for (int k = 0; k < n; ++k) {
+                if (k != j && abs(A[k][i]) > EPS) {
+                    for (int p = i + 1; p < m; ++p)
+                        A[k][p] -= A[j][p] * A[k][i];
+                }
+            }
+        }
+    }
+    return rank;
+}
+</pre>
 </body>
 </html>
